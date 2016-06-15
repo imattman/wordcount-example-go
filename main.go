@@ -20,10 +20,6 @@ func init() {
 func main() {
 	var in io.Reader
 
-	for i, arg := range flag.Args() {
-		fmt.Printf("%d arg - %s\n", i, arg)
-	}
-
 	if len(flag.Args()) > 0 {
 		fname := flag.Args()[0]
 		debug("opening file %q\n", fname)
