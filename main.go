@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sort"
 )
 
 func main() {
@@ -29,6 +30,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error scanning words %s\n", err)
 	}
-	fmt.Printf("words: %q\n", words)
+	// fmt.Printf("words: %q\n", words)
 
+	wordStats := values(uniqueWords(words))
+	sort.Sort(sort.Reverse(ByCount(wordStats)))
+
+	for _, stats := range wordStats {
+		fmt.Printf("%d\t%s\n", stats.count, stats.word)
+	}
 }
