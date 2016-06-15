@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func scanForWords(in io.Reader) ([]string, error) {
+func tokenizeWords(in io.Reader) ([]string, error) {
 	scanner := bufio.NewScanner(in)
 
 	// use predefined ScanWords splitter func
@@ -15,8 +15,8 @@ func scanForWords(in io.Reader) ([]string, error) {
 
 	words := []string{}
 	for scanner.Scan() {
-		word := strings.ToLower(strings.TrimSpace(scanner.Text()))
-		words = append(words, word)
+		w := strings.ToLower(strings.TrimSpace(scanner.Text()))
+		words = append(words, w)
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, err

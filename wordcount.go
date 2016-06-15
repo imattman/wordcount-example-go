@@ -28,25 +28,27 @@ func (ws ByCount) Less(i, j int) bool {
 	return ws[i].word < ws[j].word
 }
 
-func uniqueWords(words []string) map[string]wordStats {
-	unique := map[string]wordStats{}
+type uniqueWords map[string]wordStats
+
+func findUnique(words []string) uniqueWords {
+	wmap := map[string]wordStats{}
 
 	for _, w := range words {
-		stats, ok := unique[w]
+		stats, ok := wmap[w]
 		if !ok {
 			stats.word = w
 		}
 		stats.count++
-		unique[w] = stats
+		wmap[w] = stats
 	}
 
-	return unique
+	return uniqueWords(wmap)
 }
 
-func values(m map[string]wordStats) []wordStats {
-	allStats := make([]wordStats, 0, len(m))
+func (uw uniqueWords) statValues() []wordStats {
+	allStats := make([]wordStats, 0, len(uw))
 
-	for _, stats := range m {
+	for _, stats := range uw {
 		allStats = append(allStats, stats)
 	}
 

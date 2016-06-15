@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -9,12 +10,23 @@ import (
 	"sort"
 )
 
+var verbose bool
+
+func init() {
+	flag.BoolVar(&verbose, "v", false, "verbose/debug output")
+	flag.Parse()
+}
+
 func main() {
 	var in io.Reader
 
-	if len(os.Args) > 1 {
-		fname := os.Args[1]
-		fmt.Println("opening file", fname)
+	for i, arg := range flag.Args() {
+		fmt.Printf("%d arg - %s\n", i, arg)
+	}
+
+	if len(flag.Args()) > 0 {
+		fname := flag.Args()[0]
+		debug("opening file %q\n", fname)
 		f, err := os.Open(fname)
 		if err != nil {
 			log.Fatalf("Error opening file %q - %s\n", fname, err)
@@ -26,16 +38,24 @@ func main() {
 		in = os.Stdin
 	}
 
-	words, err := scanForWords(in)
+	words, err := tokenizeWords(in)
 	if err != nil {
-		log.Fatalf("Error scanning words %s\n", err)
+		log.Fatalf("Error tokenizing words %s\n", err)
 	}
-	// fmt.Printf("words: %q\n", words)
+	debug("words: %s\n", words)
 
-	wordStats := values(uniqueWords(words))
+	wordStats := findUnique(words).statValues()
 	sort.Sort(sort.Reverse(ByCount(wordStats)))
 
 	for _, stats := range wordStats {
 		fmt.Printf("%d\t%s\n", stats.count, stats.word)
 	}
+}
+
+func debug(format string, args ...interface{}) {
+	if !verbose {
+		return
+	}
+
+	fmt.Fprintf(os.Stderr, format, args)
 }
